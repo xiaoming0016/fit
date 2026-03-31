@@ -3,329 +3,109 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>训练记录助手</title>
+  <title>训练记录助手 · 云同步版</title>
   <style>
-    :root{
-      --bg:#f6f8fb;
-      --card:#ffffff;
-      --text:#1f2937;
-      --muted:#6b7280;
-      --line:#e5e7eb;
-      --primary:#2563eb;
-      --primary-soft:#dbeafe;
-      --green:#16a34a;
-      --red:#dc2626;
-      --shadow:0 8px 24px rgba(15,23,42,.06);
-      --radius:20px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-      background:var(--bg);
-      color:var(--text);
-    }
-    .container{
-      max-width:1180px;
-      margin:0 auto;
-      padding:20px;
-    }
-    .topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:16px;
-      flex-wrap:wrap;
-      margin-bottom:20px;
-    }
-    h1{
-      margin:0;
-      font-size:32px;
-      line-height:1.1;
-    }
-    .sub{
-      margin-top:8px;
-      color:var(--muted);
-      font-size:14px;
-    }
-    .actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    button{
-      border:0;
-      border-radius:14px;
-      padding:12px 16px;
-      font-size:14px;
-      cursor:pointer;
-      background:#111827;
-      color:#fff;
-      transition:.15s ease;
-    }
-    button:hover{transform:translateY(-1px);opacity:.95}
-    button.secondary{
-      background:#fff;
-      color:var(--text);
-      border:1px solid var(--line);
-    }
-    button.danger{background:var(--red)}
-    button.primary{background:var(--primary)}
-    .grid3{
-      display:grid;
-      grid-template-columns:repeat(3, minmax(0,1fr));
-      gap:16px;
-      margin-bottom:20px;
-    }
-    .card{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:18px;
-    }
-    .card-title{
-      font-size:15px;
-      font-weight:700;
-      margin-bottom:12px;
-    }
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:6px 10px;
-      border-radius:999px;
-      background:var(--primary-soft);
-      color:var(--primary);
-      font-size:12px;
-      font-weight:700;
-    }
-    .badge.rest{
-      background:#ecfdf5;
-      color:var(--green);
-    }
-    .progress{
-      width:100%;
-      height:10px;
-      background:#eef2f7;
-      border-radius:999px;
-      overflow:hidden;
-      margin:12px 0 8px;
-    }
-    .progress > div{
-      height:100%;
-      width:0%;
-      background:linear-gradient(90deg,#60a5fa,#2563eb);
-      border-radius:999px;
-      transition:width .2s ease;
-    }
-    .muted{color:var(--muted)}
-    .big-day{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      margin-bottom:8px;
-    }
-    .big-day strong{
-      font-size:30px;
-    }
-    .field{
-      margin-bottom:12px;
-    }
-    .field label{
-      display:block;
-      margin-bottom:6px;
-      font-size:13px;
-      color:var(--muted);
-    }
-    input, textarea, select{
-      width:100%;
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:11px 12px;
-      font-size:14px;
-      background:#fff;
-      color:var(--text);
-      outline:none;
-    }
-    textarea{min-height:100px; resize:vertical}
-    .tabs{
-      display:flex;
-      gap:10px;
-      margin-bottom:16px;
-      flex-wrap:wrap;
-    }
-    .tab{
-      padding:10px 14px;
-      border-radius:12px;
-      background:#fff;
-      border:1px solid var(--line);
-      cursor:pointer;
-      font-weight:600;
-      color:var(--text);
-    }
-    .tab.active{
-      background:#111827;
-      color:#fff;
-      border-color:#111827;
-    }
-    .panel{display:none}
-    .panel.active{display:block}
-    .panel-head{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:16px;
-      flex-wrap:wrap;
-      margin-bottom:12px;
-    }
-    .panel-title{
-      font-size:24px;
-      font-weight:800;
-      margin-bottom:6px;
-    }
-    .exercise{
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:16px;
-      margin-bottom:14px;
-      background:#fff;
-    }
-    .exercise-top{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-bottom:12px;
-    }
-    .exercise-name{
-      font-size:17px;
-      font-weight:700;
-      margin-bottom:4px;
-    }
-    .exercise-grid{
-      display:grid;
-      grid-template-columns:repeat(3, minmax(0,1fr));
-      gap:12px;
-    }
-    .plan-grid{
-      display:grid;
-      grid-template-columns:repeat(4, minmax(0,1fr));
-      gap:16px;
-    }
-    .mini-block{
-      background:#f8fafc;
-      border-radius:14px;
-      padding:10px 12px;
-      margin-top:10px;
-      border:1px solid #eef2f7;
-    }
-    .mini-title{
-      font-weight:700;
-      margin-bottom:4px;
-    }
-    .history-item{
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:16px;
-      margin-bottom:12px;
-      background:#fff;
-    }
-    .history-top{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-bottom:8px;
-    }
-    .note-box{
-      background:#fff;
-      border:1px dashed var(--line);
-      border-radius:18px;
-      padding:16px;
-      margin-top:18px;
-      color:var(--muted);
-    }
-    .rest-box{
-      text-align:center;
-      padding:32px 18px;
-      border:1px dashed var(--line);
-      border-radius:18px;
-      color:var(--muted);
-      background:#fff;
-    }
-    .pill{
-      display:inline-block;
-      padding:4px 8px;
-      font-size:12px;
-      font-weight:700;
-      color:#334155;
-      background:#f1f5f9;
-      border-radius:999px;
-    }
-    @media (max-width: 980px){
-      .grid3{grid-template-columns:1fr}
-      .plan-grid{grid-template-columns:repeat(2, minmax(0,1fr))}
-    }
-    @media (max-width: 720px){
-      .exercise-grid{grid-template-columns:1fr}
-      .plan-grid{grid-template-columns:1fr}
-      .container{padding:14px}
-      h1{font-size:26px}
-      .panel-title{font-size:21px}
-      .big-day strong{font-size:26px}
-      button{width:100%}
-      .actions{width:100%}
-    }
+    :root{--bg:#f6f8fb;--card:#fff;--text:#1f2937;--muted:#6b7280;--line:#e5e7eb;--primary:#2563eb;--primary-soft:#dbeafe;--green:#16a34a;--red:#dc2626;--amber:#d97706;--shadow:0 8px 24px rgba(15,23,42,.06);--radius:20px}
+    *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text)}
+    .container{max-width:1180px;margin:0 auto;padding:20px} .topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+    h1{margin:0;font-size:32px;line-height:1.1} .sub{margin-top:8px;color:var(--muted);font-size:14px} .actions{display:flex;gap:10px;flex-wrap:wrap}
+    button{border:0;border-radius:14px;padding:12px 16px;font-size:14px;cursor:pointer;background:#111827;color:#fff;transition:.15s ease}
+    button:hover{transform:translateY(-1px);opacity:.95} button.secondary{background:#fff;color:var(--text);border:1px solid var(--line)} button.danger{background:var(--red)} button.primary{background:var(--primary)} button.green{background:var(--green)} button:disabled{opacity:.55;cursor:not-allowed;transform:none}
+    .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:20px} .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px} .card-title{font-size:15px;font-weight:700;margin-bottom:12px}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:var(--primary-soft);color:var(--primary);font-size:12px;font-weight:700}
+    .badge.rest{background:#ecfdf5;color:var(--green)} .badge.warn{background:#fff7ed;color:var(--amber)} .badge.good{background:#ecfdf5;color:var(--green)}
+    .progress{width:100%;height:10px;background:#eef2f7;border-radius:999px;overflow:hidden;margin:12px 0 8px} .progress>div{height:100%;width:0%;background:linear-gradient(90deg,#60a5fa,#2563eb);border-radius:999px;transition:width .2s ease}
+    .muted{color:var(--muted)} .big-day{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px} .big-day strong{font-size:30px}
+    .field{margin-bottom:12px} .field label{display:block;margin-bottom:6px;font-size:13px;color:var(--muted)} input,textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 12px;font-size:14px;background:#fff;color:var(--text);outline:none} textarea{min-height:100px;resize:vertical}
+    .tabs{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap} .tab{padding:10px 14px;border-radius:12px;background:#fff;border:1px solid var(--line);cursor:pointer;font-weight:600;color:var(--text)} .tab.active{background:#111827;color:#fff;border-color:#111827}
+    .panel{display:none} .panel.active{display:block} .panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:12px} .panel-title{font-size:24px;font-weight:800;margin-bottom:6px}
+    .exercise{border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;background:#fff} .exercise-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px} .exercise-name{font-size:17px;font-weight:700;margin-bottom:4px} .exercise-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .plan-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px} .mini-block{background:#f8fafc;border-radius:14px;padding:10px 12px;margin-top:10px;border:1px solid #eef2f7} .mini-title{font-weight:700;margin-bottom:4px}
+    .history-item{border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px;background:#fff} .history-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+    .note-box{background:#fff;border:1px dashed var(--line);border-radius:18px;padding:16px;margin-top:18px;color:var(--muted)} .rest-box{text-align:center;padding:32px 18px;border:1px dashed var(--line);border-radius:18px;color:var(--muted);background:#fff}
+    .pill{display:inline-block;padding:4px 8px;font-size:12px;font-weight:700;color:#334155;background:#f1f5f9;border-radius:999px} .auth-grid{display:grid;grid-template-columns:1.4fr .8fr;gap:16px;margin-bottom:20px} .status-line{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap} .small{font-size:12px} .code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#f8fafc;border:1px solid #eef2f7;padding:2px 6px;border-radius:8px} .stack{display:flex;flex-direction:column;gap:10px} .row{display:flex;gap:10px;flex-wrap:wrap} .hidden{display:none !important}
+    @media (max-width:980px){.grid3{grid-template-columns:1fr} .plan-grid{grid-template-columns:repeat(2,minmax(0,1fr))} .auth-grid{grid-template-columns:1fr}}
+    @media (max-width:720px){.exercise-grid{grid-template-columns:1fr} .plan-grid{grid-template-columns:1fr} .container{padding:14px} h1{font-size:26px} .panel-title{font-size:21px} .big-day strong{font-size:26px} button{width:100%} .actions{width:100%}}
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <div class="container">
     <div class="topbar">
       <div>
-        <h1>训练记录助手</h1>
-        <div class="sub">适合你的 8 天滚动计划：记录第几天、重量、次数、备注，数据保存在本地浏览器。</div>
+        <h1>训练记录助手 · 云同步版</h1>
+        <div class="sub">支持邮箱注册 / 登录，并把训练数据同步到 Supabase。未登录时，仍然只保存在当前浏览器本地。</div>
       </div>
       <div class="actions">
         <button class="secondary" id="exportJsonBtn">导出 JSON</button>
         <button class="secondary" id="exportCsvBtn">导出 CSV</button>
+        <button class="secondary" id="syncNowBtn">立即同步</button>
         <button class="danger" id="resetBtn">重置全部</button>
+      </div>
+    </div>
+
+    <div class="auth-grid">
+      <div class="card">
+        <div class="card-title">账号与同步</div>
+        <div id="signedOutBox" class="stack">
+          <div class="muted">用邮箱注册或登录后，你的训练记录会同步到云端。未登录时，数据仍只保存在当前浏览器本地。</div>
+          <div class="row">
+            <div class="field" style="flex:1;min-width:220px"><label>邮箱</label><input id="emailInput" type="email" placeholder="例如 you@example.com" /></div>
+            <div class="field" style="flex:1;min-width:220px"><label>密码</label><input id="passwordInput" type="password" placeholder="至少 6 位" /></div>
+          </div>
+          <div class="row">
+            <button class="primary" id="signUpBtn">注册</button>
+            <button class="secondary" id="signInBtn">登录</button>
+          </div>
+          <div class="small muted">如果你开启了邮箱确认，注册后需要先去邮箱点确认链接，再回来登录。</div>
+        </div>
+
+        <div id="signedInBox" class="stack hidden">
+          <div class="status-line">
+            <div>
+              <div style="font-weight:700" id="userEmailText">已登录</div>
+              <div class="small muted">当前网站地址：<span class="code">https://xiaoming0016.github.io/fit/</span></div>
+            </div>
+            <div class="row" style="margin:0">
+              <button class="green" id="pullCloudBtn">拉取云端</button>
+              <button class="secondary" id="logoutBtn">退出登录</button>
+            </div>
+          </div>
+          <div class="small muted">当前策略：网页继续本地保存，同时在登录状态下自动同步到 Supabase。</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">同步状态</div>
+        <div class="stack">
+          <div class="status-line">
+            <span id="authBadge" class="badge warn">未登录</span>
+            <span id="syncBadge" class="badge warn">仅本地保存</span>
+          </div>
+          <div class="muted" id="statusText">还没有连接到云端账号。</div>
+          <div class="small muted">表名：<span class="code">public.training_states</span></div>
+          <div class="small muted">同步方式：登录后自动同步 + 可手动立即同步</div>
+        </div>
       </div>
     </div>
 
     <div class="grid3">
       <div class="card">
         <div class="card-title">当前进度</div>
-        <div class="big-day">
-          <strong id="currentDayNum">Day 1</strong>
-          <span id="dayTypeBadge" class="badge">训练日</span>
-        </div>
+        <div class="big-day"><strong id="currentDayNum">Day 1</strong><span id="dayTypeBadge" class="badge">训练日</span></div>
         <div class="progress"><div id="progressBar"></div></div>
         <div class="muted" id="progressText">最近 8 次完成度：0%</div>
       </div>
 
       <div class="card">
         <div class="card-title">今日指标</div>
-        <div class="field">
-          <label>体重（kg）</label>
-          <input id="bodyWeightInput" placeholder="例如 95.0" />
-        </div>
-        <div class="field">
-          <label>蛋白（g）</label>
-          <input id="proteinInput" placeholder="例如 180" />
-        </div>
+        <div class="field"><label>体重（kg）</label><input id="bodyWeightInput" placeholder="例如 95.0" /></div>
+        <div class="field"><label>蛋白（g）</label><input id="proteinInput" placeholder="例如 180" /></div>
       </div>
 
       <div class="card">
         <div class="card-title">计划提示</div>
-        <div class="muted" style="line-height:1.8">
-          复合动作休息 2–3 分钟，孤立动作 60–90 秒。<br/>
-          同重量做到次数上限，下次加重量 2.5–5%。<br/>
-          连续 6–8 周后做 1 次减量循环。
-        </div>
+        <div class="muted" style="line-height:1.8">复合动作休息 2–3 分钟，孤立动作 60–90 秒。<br/>同重量做到次数上限，下次加重量 2.5–5%。<br/>连续 6–8 周后做 1 次减量循环。</div>
       </div>
     </div>
 
@@ -340,429 +120,459 @@
     <div id="historyPanel" class="panel card"></div>
 
     <div class="note-box">
-      <div style="font-weight:700;color:#111827;margin-bottom:8px">这个版本已经能直接用</div>
-      1. 自动记住当前是第几天<br/>
-      2. 每个动作可填写重量 / 次数 / 备注<br/>
-      3. 支持训练历史回看<br/>
-      4. 支持导出 JSON / CSV<br/>
-      5. 所有数据保存在你的浏览器本地
+      <div style="font-weight:700;color:#111827;margin-bottom:8px">你现在要做的两件事</div>
+      1. 在 Supabase 的 <span class="code">SQL Editor</span> 里运行我给你的建表 SQL。<br/>
+      2. 把这个文件命名为 <span class="code">index.html</span>，上传到 GitHub Pages 仓库根目录覆盖旧文件。
     </div>
   </div>
 
   <script>
-    const planDays = [
-      {
-        id: 1,
-        title: "Day 1 · 上肢 A",
-        type: "train",
-        duration: "60–70 分钟",
-        goal: "胸背主练，兼顾肩臂",
-        exercises: [
-          { name: "平板卧推", sets: "4", reps: "5–8", rir: "1–2" },
-          { name: "高位下拉", sets: "4", reps: "8–12", rir: "1–2" },
-          { name: "上斜哑铃卧推", sets: "3", reps: "8–12", rir: "1–2" },
-          { name: "胸托划船 / 坐姿划船", sets: "3", reps: "8–12", rir: "1–2" },
-          { name: "侧平举", sets: "4", reps: "12–20", rir: "0–1" },
-          { name: "绳索下压", sets: "3", reps: "10–15", rir: "0–1" },
-          { name: "哑铃弯举", sets: "2", reps: "10–15", rir: "0–1" },
-        ],
-      },
-      {
-        id: 2,
-        title: "Day 2 · 休息",
-        type: "rest",
-        duration: "-",
-        goal: "走路、拉伸、恢复",
-        exercises: [],
-      },
-      {
-        id: 3,
-        title: "Day 3 · 下肢精简 + 手臂",
-        type: "train",
-        duration: "45–55 分钟",
-        goal: "保功能、保基本力量、顺带补手臂",
-        exercises: [
-          { name: "深蹲 / 腿举", sets: "3", reps: "5–8", rir: "1–2" },
-          { name: "罗马尼亚硬拉", sets: "3", reps: "6–10", rir: "1–2" },
-          { name: "保加利亚分腿蹲 / 箭步蹲", sets: "2", reps: "8–10/侧", rir: "1–2" },
-          { name: "站姿提踵", sets: "2–3", reps: "10–15", rir: "0–1" },
-          { name: "悬垂举腿 / 绳索卷腹", sets: "2–3", reps: "10–15", rir: "0–1" },
-          { name: "锤式弯举", sets: "3", reps: "8–12", rir: "0–1" },
-          { name: "过顶绳索臂屈伸", sets: "3", reps: "10–15", rir: "0–1" },
-        ],
-      },
-      {
-        id: 4,
-        title: "Day 4 · 休息",
-        type: "rest",
-        duration: "-",
-        goal: "走路、拉伸、恢复",
-        exercises: [],
-      },
-      {
-        id: 5,
-        title: "Day 5 · 上肢 B",
-        type: "train",
-        duration: "60–70 分钟",
-        goal: "上胸、背阔、肩部厚度",
-        exercises: [
-          { name: "上斜杠铃卧推", sets: "4", reps: "6–10", rir: "1–2" },
-          { name: "引体向上 / 中立握下拉", sets: "4", reps: "6–10", rir: "1–2" },
-          { name: "器械推胸 / 哑铃平板卧推", sets: "3", reps: "8–12", rir: "1–2" },
-          { name: "单臂哑铃划船 / 坐姿划船", sets: "3", reps: "8–12", rir: "1–2" },
-          { name: "反向飞鸟", sets: "3", reps: "12–20", rir: "0–1" },
-          { name: "侧平举", sets: "3", reps: "12–20", rir: "0–1" },
-          { name: "绳索弯举", sets: "2–3", reps: "10–15", rir: "0–1" },
-        ],
-      },
-      {
-        id: 6,
-        title: "Day 6 · 休息",
-        type: "rest",
-        duration: "-",
-        goal: "走路、拉伸、恢复",
-        exercises: [],
-      },
-      {
-        id: 7,
-        title: "Day 7 · 上肢 C",
-        type: "train",
-        duration: "45–60 分钟",
-        goal: "上肢补量，偏肩背胸泵感",
-        exercises: [
-          { name: "器械肩推 / 哑铃肩推", sets: "3", reps: "6–10", rir: "1–2" },
-          { name: "胸托划船 / 坐姿划船", sets: "3", reps: "8–12", rir: "1–2" },
-          { name: "上斜器械推胸 / 双杠臂屈伸辅助", sets: "3", reps: "8–12", rir: "1–2" },
-          { name: "宽握下拉 / 直臂下拉", sets: "2–3", reps: "10–15", rir: "0–1" },
-          { name: "侧平举", sets: "3", reps: "15–20", rir: "0–1" },
-          { name: "反向飞鸟", sets: "2–3", reps: "15–20", rir: "0–1" },
-          { name: "绳索下压 + 哑铃弯举", sets: "各 2", reps: "10–15", rir: "0–1" },
-        ],
-      },
-      {
-        id: 8,
-        title: "Day 8 · 休息",
-        type: "rest",
-        duration: "-",
-        goal: "走路、拉伸、恢复",
-        exercises: [],
-      },
-    ];
+const SUPABASE_URL = "https://pqnfgjrzwikotbeephzl.supabase.co";
+const SUPABASE_KEY = "sb_publishable_60fHrSGzG2if3pavzsLU6w_jND_-Y1F";
+const SITE_URL = "https://xiaoming0016.github.io/fit/";
+const STORAGE_KEY = "training_tracker_html_supabase_v1";
 
-    const STORAGE_KEY = "training_tracker_html_v1";
+const planDays = [
+  { id: 1, title: "Day 1 · 上肢 A", type: "train", duration: "60–70 分钟", goal: "胸背主练，兼顾肩臂", exercises: [
+    { name: "平板卧推", sets: "4", reps: "5–8", rir: "1–2" },
+    { name: "高位下拉", sets: "4", reps: "8–12", rir: "1–2" },
+    { name: "上斜哑铃卧推", sets: "3", reps: "8–12", rir: "1–2" },
+    { name: "胸托划船 / 坐姿划船", sets: "3", reps: "8–12", rir: "1–2" },
+    { name: "侧平举", sets: "4", reps: "12–20", rir: "0–1" },
+    { name: "绳索下压", sets: "3", reps: "10–15", rir: "0–1" },
+    { name: "哑铃弯举", sets: "2", reps: "10–15", rir: "0–1" },
+  ]},
+  { id: 2, title: "Day 2 · 休息", type: "rest", duration: "-", goal: "走路、拉伸、恢复", exercises: [] },
+  { id: 3, title: "Day 3 · 下肢精简 + 手臂", type: "train", duration: "45–55 分钟", goal: "保功能、保基本力量、顺带补手臂", exercises: [
+    { name: "深蹲 / 腿举", sets: "3", reps: "5–8", rir: "1–2" },
+    { name: "罗马尼亚硬拉", sets: "3", reps: "6–10", rir: "1–2" },
+    { name: "保加利亚分腿蹲 / 箭步蹲", sets: "2", reps: "8–10/侧", rir: "1–2" },
+    { name: "站姿提踵", sets: "2–3", reps: "10–15", rir: "0–1" },
+    { name: "悬垂举腿 / 绳索卷腹", sets: "2–3", reps: "10–15", rir: "0–1" },
+    { name: "锤式弯举", sets: "3", reps: "8–12", rir: "0–1" },
+    { name: "过顶绳索臂屈伸", sets: "3", reps: "10–15", rir: "0–1" },
+  ]},
+  { id: 4, title: "Day 4 · 休息", type: "rest", duration: "-", goal: "走路、拉伸、恢复", exercises: [] },
+  { id: 5, title: "Day 5 · 上肢 B", type: "train", duration: "60–70 分钟", goal: "上胸、背阔、肩部厚度", exercises: [
+    { name: "上斜杠铃卧推", sets: "4", reps: "6–10", rir: "1–2" },
+    { name: "引体向上 / 中立握下拉", sets: "4", reps: "6–10", rir: "1–2" },
+    { name: "器械推胸 / 哑铃平板卧推", sets: "3", reps: "8–12", rir: "1–2" },
+    { name: "单臂哑铃划船 / 坐姿划船", sets: "3", reps: "8–12", rir: "1–2" },
+    { name: "反向飞鸟", sets: "3", reps: "12–20", rir: "0–1" },
+    { name: "侧平举", sets: "3", reps: "12–20", rir: "0–1" },
+    { name: "绳索弯举", sets: "2–3", reps: "10–15", rir: "0–1" },
+  ]},
+  { id: 6, title: "Day 6 · 休息", type: "rest", duration: "-", goal: "走路、拉伸、恢复", exercises: [] },
+  { id: 7, title: "Day 7 · 上肢 C", type: "train", duration: "45–60 分钟", goal: "上肢补量，偏肩背胸泵感", exercises: [
+    { name: "器械肩推 / 哑铃肩推", sets: "3", reps: "6–10", rir: "1–2" },
+    { name: "胸托划船 / 坐姿划船", sets: "3", reps: "8–12", rir: "1–2" },
+    { name: "上斜器械推胸 / 双杠臂屈伸辅助", sets: "3", reps: "8–12", rir: "1–2" },
+    { name: "宽握下拉 / 直臂下拉", sets: "2–3", reps: "10–15", rir: "0–1" },
+    { name: "侧平举", sets: "3", reps: "15–20", rir: "0–1" },
+    { name: "反向飞鸟", sets: "2–3", reps: "15–20", rir: "0–1" },
+    { name: "绳索下压 + 哑铃弯举", sets: "各 2", reps: "10–15", rir: "0–1" },
+  ]},
+  { id: 8, title: "Day 8 · 休息", type: "rest", duration: "-", goal: "走路、拉伸、恢复", exercises: [] },
+];
 
-    function todayKey() {
-      return new Date().toISOString().slice(0, 10);
-    }
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    function makeDefaultState() {
-      return {
-        currentDay: 1,
-        history: [],
-        logs: {},
-        bodyWeight: "",
-        protein: "",
-        notesByDay: {},
-      };
-    }
+function todayKey() { return new Date().toISOString().slice(0, 10); }
+function makeDefaultState() {
+  return { currentDay: 1, history: [], logs: {}, bodyWeight: "", protein: "", notesByDay: {} };
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return makeDefaultState();
+    return { ...makeDefaultState(), ...JSON.parse(raw) };
+  } catch (e) {
+    return makeDefaultState();
+  }
+}
 
-    function loadState() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return makeDefaultState();
-        return { ...makeDefaultState(), ...JSON.parse(raw) };
-      } catch (e) {
-        return makeDefaultState();
-      }
-    }
+let state = loadState();
+let currentSession = null;
+let isHydratingFromCloud = false;
+let syncTimer = null;
+let lastSyncedAt = null;
 
-    let state = loadState();
-
-    function saveState() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }
-
-    function currentPlan() {
-      return planDays.find(d => d.id === state.currentDay) || planDays[0];
-    }
-
-    function currentLog() {
-      return state.logs[state.currentDay] || {};
-    }
-
-    function completionPercent() {
-      const completed = state.history.slice(-8).length;
-      return Math.min(100, (completed / 8) * 100);
-    }
-
-    function escapeHtml(str) {
-      return String(str ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#39;");
-    }
-
-    function updateExercise(name, field, value) {
-      if (!state.logs[state.currentDay]) state.logs[state.currentDay] = {};
-      if (!state.logs[state.currentDay][name]) state.logs[state.currentDay][name] = {};
-      state.logs[state.currentDay][name][field] = value;
-      saveState();
-    }
-
-    function renderSummary() {
-      const plan = currentPlan();
-      document.getElementById("currentDayNum").textContent = "Day " + state.currentDay;
-      const badge = document.getElementById("dayTypeBadge");
-      badge.textContent = plan.type === "train" ? "训练日" : "休息日";
-      badge.className = "badge" + (plan.type === "rest" ? " rest" : "");
-      const percent = completionPercent();
-      document.getElementById("progressBar").style.width = percent + "%";
-      document.getElementById("progressText").textContent = "最近 8 次完成度：" + Math.round(percent) + "%";
-      document.getElementById("bodyWeightInput").value = state.bodyWeight || "";
-      document.getElementById("proteinInput").value = state.protein || "";
-    }
-
-    function renderToday() {
-      const plan = currentPlan();
-      const panel = document.getElementById("todayPanel");
-      let html = `
-        <div class="panel-head">
-          <div>
-            <div class="panel-title">${escapeHtml(plan.title)}</div>
-            <div class="muted">目标：${escapeHtml(plan.goal)} · 预计时长：${escapeHtml(plan.duration)}</div>
+function saveLocalState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function escapeHtml(str) {
+  return String(str ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+function currentPlan() { return planDays.find(d => d.id === state.currentDay) || planDays[0]; }
+function currentLog() { return state.logs[state.currentDay] || {}; }
+function completionPercent() {
+  const completed = state.history.slice(-8).length;
+  return Math.min(100, (completed / 8) * 100);
+}
+function setStatus(text, authKind, syncKind) {
+  document.getElementById("statusText").textContent = text;
+  const authBadge = document.getElementById("authBadge");
+  const syncBadge = document.getElementById("syncBadge");
+  authBadge.className = "badge " + (authKind === "in" ? "good" : "warn");
+  authBadge.textContent = authKind === "in" ? "已登录" : "未登录";
+  if (syncKind === "cloud-ok") {
+    syncBadge.className = "badge good";
+    syncBadge.textContent = "云端同步中";
+  } else if (syncKind === "cloud-wait") {
+    syncBadge.className = "badge warn";
+    syncBadge.textContent = "等待同步";
+  } else {
+    syncBadge.className = "badge warn";
+    syncBadge.textContent = "仅本地保存";
+  }
+}
+function renderAuth() {
+  const signedOutBox = document.getElementById("signedOutBox");
+  const signedInBox = document.getElementById("signedInBox");
+  if (currentSession?.user) {
+    signedOutBox.classList.add("hidden");
+    signedInBox.classList.remove("hidden");
+    document.getElementById("userEmailText").textContent = "已登录：" + (currentSession.user.email || "未知邮箱");
+  } else {
+    signedOutBox.classList.remove("hidden");
+    signedInBox.classList.add("hidden");
+  }
+}
+function renderSummary() {
+  const plan = currentPlan();
+  document.getElementById("currentDayNum").textContent = "Day " + state.currentDay;
+  const badge = document.getElementById("dayTypeBadge");
+  badge.textContent = plan.type === "train" ? "训练日" : "休息日";
+  badge.className = "badge" + (plan.type === "rest" ? " rest" : "");
+  const percent = completionPercent();
+  document.getElementById("progressBar").style.width = percent + "%";
+  document.getElementById("progressText").textContent = "最近 8 次完成度：" + Math.round(percent) + "%";
+  document.getElementById("bodyWeightInput").value = state.bodyWeight || "";
+  document.getElementById("proteinInput").value = state.protein || "";
+}
+function updateExercise(name, field, value) {
+  if (!state.logs[state.currentDay]) state.logs[state.currentDay] = {};
+  if (!state.logs[state.currentDay][name]) state.logs[state.currentDay][name] = {};
+  state.logs[state.currentDay][name][field] = value;
+  saveLocalState();
+  queueCloudSync();
+}
+function renderToday() {
+  const plan = currentPlan();
+  const panel = document.getElementById("todayPanel");
+  let html = `
+    <div class="panel-head">
+      <div>
+        <div class="panel-title">${escapeHtml(plan.title)}</div>
+        <div class="muted">目标：${escapeHtml(plan.goal)} · 预计时长：${escapeHtml(plan.duration)}</div>
+      </div>
+      <button class="primary" id="completeDayBtn">完成今天并进入下一天</button>
+    </div>
+  `;
+  if (plan.type === "rest") {
+    html += `<div class="rest-box">今天是休息日。建议走路、拉伸、恢复。</div>`;
+  } else {
+    const log = currentLog();
+    html += `<div>`;
+    plan.exercises.forEach(ex => {
+      const item = log[ex.name] || {};
+      html += `
+        <div class="exercise">
+          <div class="exercise-top">
+            <div>
+              <div class="exercise-name">${escapeHtml(ex.name)}</div>
+              <div class="muted">${escapeHtml(ex.sets)} 组 · ${escapeHtml(ex.reps)} 次 · RIR ${escapeHtml(ex.rir)}</div>
+            </div>
+            <span class="pill">建议动作</span>
           </div>
-          <button class="primary" id="completeDayBtn">完成今天并进入下一天</button>
+          <div class="exercise-grid">
+            <div class="field">
+              <label>重量</label>
+              <input data-ex-name="${escapeHtml(ex.name)}" data-field="weight" class="exercise-input" value="${escapeHtml(item.weight || "")}" placeholder="例如 50kg" />
+            </div>
+            <div class="field">
+              <label>次数</label>
+              <input data-ex-name="${escapeHtml(ex.name)}" data-field="reps" class="exercise-input" value="${escapeHtml(item.reps || "")}" placeholder="例如 8 / 8 / 7 / 6" />
+            </div>
+            <div class="field">
+              <label>备注</label>
+              <input data-ex-name="${escapeHtml(ex.name)}" data-field="note" class="exercise-input" value="${escapeHtml(item.note || "")}" placeholder="例如 最后一组接近力竭" />
+            </div>
+          </div>
         </div>
       `;
-
-      if (plan.type === "rest") {
-        html += `<div class="rest-box">今天是休息日。建议走路、拉伸、恢复。</div>`;
-      } else {
-        const log = currentLog();
-        html += `<div>`;
-        plan.exercises.forEach(ex => {
-          const item = log[ex.name] || {};
-          html += `
-            <div class="exercise">
-              <div class="exercise-top">
-                <div>
-                  <div class="exercise-name">${escapeHtml(ex.name)}</div>
-                  <div class="muted">${escapeHtml(ex.sets)} 组 · ${escapeHtml(ex.reps)} 次 · RIR ${escapeHtml(ex.rir)}</div>
-                </div>
-                <span class="pill">建议动作</span>
-              </div>
-              <div class="exercise-grid">
-                <div class="field">
-                  <label>重量</label>
-                  <input data-ex-name="${escapeHtml(ex.name)}" data-field="weight" class="exercise-input" value="${escapeHtml(item.weight || "")}" placeholder="例如 50kg" />
-                </div>
-                <div class="field">
-                  <label>次数</label>
-                  <input data-ex-name="${escapeHtml(ex.name)}" data-field="reps" class="exercise-input" value="${escapeHtml(item.reps || "")}" placeholder="例如 8 / 8 / 7 / 6" />
-                </div>
-                <div class="field">
-                  <label>备注</label>
-                  <input data-ex-name="${escapeHtml(ex.name)}" data-field="note" class="exercise-input" value="${escapeHtml(item.note || "")}" placeholder="例如 最后一组接近力竭" />
-                </div>
-              </div>
-            </div>
-          `;
-        });
-        html += `
-          <div class="field">
-            <label>今日总备注</label>
-            <textarea id="dayNoteInput" placeholder="例如：今天状态一般，卧推保守；下拉不错。">${escapeHtml(state.notesByDay[state.currentDay] || "")}</textarea>
-          </div>
-        `;
-        html += `</div>`;
-      }
-
-      panel.innerHTML = html;
-
-      const completeBtn = document.getElementById("completeDayBtn");
-      if (completeBtn) completeBtn.onclick = completeDay;
-
-      document.querySelectorAll(".exercise-input").forEach(input => {
-        input.addEventListener("input", (e) => {
-          const name = e.target.getAttribute("data-ex-name");
-          const field = e.target.getAttribute("data-field");
-          updateExercise(name, field, e.target.value);
-        });
+    });
+    html += `
+      <div class="field">
+        <label>今日总备注</label>
+        <textarea id="dayNoteInput" placeholder="例如：今天状态一般，卧推保守；下拉不错。">${escapeHtml(state.notesByDay[state.currentDay] || "")}</textarea>
+      </div>
+    `;
+    html += `</div>`;
+  }
+  panel.innerHTML = html;
+  document.getElementById("completeDayBtn").onclick = completeDay;
+  document.querySelectorAll(".exercise-input").forEach(input => {
+    input.addEventListener("input", (e) => {
+      updateExercise(e.target.getAttribute("data-ex-name"), e.target.getAttribute("data-field"), e.target.value);
+    });
+  });
+  const dayNoteInput = document.getElementById("dayNoteInput");
+  if (dayNoteInput) {
+    dayNoteInput.addEventListener("input", (e) => {
+      state.notesByDay[state.currentDay] = e.target.value;
+      saveLocalState();
+      queueCloudSync();
+    });
+  }
+}
+function renderPlan() {
+  const panel = document.getElementById("planPanel");
+  let html = `<div class="panel-title" style="margin-bottom:16px">完整计划</div><div class="plan-grid">`;
+  planDays.forEach(day => {
+    html += `<div class="card" style="padding:16px"><div style="font-size:18px;font-weight:800;margin-bottom:8px">${escapeHtml(day.title)}</div><div class="muted">${escapeHtml(day.goal)}</div><div class="muted" style="margin-top:6px">预计时长：${escapeHtml(day.duration)}</div>`;
+    if (day.type === "train") {
+      day.exercises.forEach(ex => {
+        html += `<div class="mini-block"><div class="mini-title">${escapeHtml(ex.name)}</div><div class="muted">${escapeHtml(ex.sets)} 组 · ${escapeHtml(ex.reps)} 次 · RIR ${escapeHtml(ex.rir)}</div></div>`;
       });
-
-      const dayNoteInput = document.getElementById("dayNoteInput");
-      if (dayNoteInput) {
-        dayNoteInput.addEventListener("input", (e) => {
-          state.notesByDay[state.currentDay] = e.target.value;
-          saveState();
-        });
-      }
+    } else {
+      html += `<div class="mini-block muted">恢复日</div>`;
     }
-
-    function renderPlan() {
-      const panel = document.getElementById("planPanel");
-      let html = `<div class="panel-title" style="margin-bottom:16px">完整计划</div><div class="plan-grid">`;
-      planDays.forEach(day => {
-        html += `
-          <div class="card" style="padding:16px">
-            <div style="font-size:18px;font-weight:800;margin-bottom:8px">${escapeHtml(day.title)}</div>
-            <div class="muted">${escapeHtml(day.goal)}</div>
-            <div class="muted" style="margin-top:6px">预计时长：${escapeHtml(day.duration)}</div>
-        `;
-        if (day.type === "train") {
-          day.exercises.forEach(ex => {
-            html += `
-              <div class="mini-block">
-                <div class="mini-title">${escapeHtml(ex.name)}</div>
-                <div class="muted">${escapeHtml(ex.sets)} 组 · ${escapeHtml(ex.reps)} 次 · RIR ${escapeHtml(ex.rir)}</div>
-              </div>
-            `;
-          });
-        } else {
-          html += `<div class="mini-block muted">恢复日</div>`;
-        }
-        html += `</div>`;
+    html += `</div>`;
+  });
+  html += `</div>`;
+  panel.innerHTML = html;
+}
+function renderHistory() {
+  const panel = document.getElementById("historyPanel");
+  let html = `<div class="panel-title" style="margin-bottom:16px">历史记录</div>`;
+  if (!state.history.length) {
+    html += `<div class="muted">还没有历史记录，先完成一次训练。</div>`;
+    panel.innerHTML = html;
+    return;
+  }
+  [...state.history].reverse().forEach(entry => {
+    html += `<div class="history-item"><div class="history-top"><div><div style="font-size:17px;font-weight:700">${escapeHtml(entry.title)}</div><div class="muted">${escapeHtml(entry.date)}</div></div><span class="badge ${entry.type === "rest" ? "rest" : ""}">${entry.type === "train" ? "已训练" : "已休息"}</span></div>`;
+    const logEntries = Object.entries(entry.log || {});
+    if (!logEntries.length) {
+      html += `<div class="muted">没有填写动作明细。</div>`;
+    } else {
+      logEntries.forEach(([name, v]) => {
+        html += `<div class="muted" style="line-height:1.8">${escapeHtml(name)}：${escapeHtml(v.weight || "-")} · ${escapeHtml(v.reps || "-")} · ${escapeHtml(v.note || "-")}</div>`;
       });
-      html += `</div>`;
-      panel.innerHTML = html;
     }
-
-    function renderHistory() {
-      const panel = document.getElementById("historyPanel");
-      let html = `<div class="panel-title" style="margin-bottom:16px">历史记录</div>`;
-      if (!state.history.length) {
-        html += `<div class="muted">还没有历史记录，先完成一次训练。</div>`;
-        panel.innerHTML = html;
-        return;
-      }
-
-      [...state.history].reverse().forEach(entry => {
-        html += `
-          <div class="history-item">
-            <div class="history-top">
-              <div>
-                <div style="font-size:17px;font-weight:700">${escapeHtml(entry.title)}</div>
-                <div class="muted">${escapeHtml(entry.date)}</div>
-              </div>
-              <span class="badge ${entry.type === "rest" ? "rest" : ""}">${entry.type === "train" ? "已训练" : "已休息"}</span>
-            </div>
-        `;
-        const logEntries = Object.entries(entry.log || {});
-        if (!logEntries.length) {
-          html += `<div class="muted">没有填写动作明细。</div>`;
-        } else {
-          logEntries.forEach(([name, v]) => {
-            html += `<div class="muted" style="line-height:1.8">${escapeHtml(name)}：${escapeHtml(v.weight || "-")} · ${escapeHtml(v.reps || "-")} · ${escapeHtml(v.note || "-")}</div>`;
-          });
-        }
-        if (entry.dayNote) {
-          html += `<div style="margin-top:8px;color:#374151">备注：${escapeHtml(entry.dayNote)}</div>`;
-        }
-        html += `</div>`;
-      });
-
-      panel.innerHTML = html;
+    if (entry.dayNote) {
+      html += `<div style="margin-top:8px;color:#374151">备注：${escapeHtml(entry.dayNote)}</div>`;
     }
-
-    function renderAll() {
-      renderSummary();
-      renderToday();
-      renderPlan();
-      renderHistory();
-    }
-
-    function completeDay() {
-      const plan = currentPlan();
-      const entry = {
-        day: state.currentDay,
-        title: plan.title,
-        date: todayKey(),
-        type: plan.type,
-        log: JSON.parse(JSON.stringify(state.logs[state.currentDay] || {})),
-        dayNote: state.notesByDay[state.currentDay] || "",
-      };
-      state.history.push(entry);
-      state.currentDay = state.currentDay === 8 ? 1 : state.currentDay + 1;
-      saveState();
+    html += `</div>`;
+  });
+  panel.innerHTML = html;
+}
+function renderAll() { renderAuth(); renderSummary(); renderToday(); renderPlan(); renderHistory(); }
+function completeDay() {
+  const plan = currentPlan();
+  const entry = {
+    day: state.currentDay,
+    title: plan.title,
+    date: todayKey(),
+    type: plan.type,
+    log: JSON.parse(JSON.stringify(state.logs[state.currentDay] || {})),
+    dayNote: state.notesByDay[state.currentDay] || "",
+  };
+  state.history.push(entry);
+  state.currentDay = state.currentDay === 8 ? 1 : state.currentDay + 1;
+  saveLocalState();
+  renderAll();
+  queueCloudSync();
+  alert("已记录，已进入下一天。");
+}
+function exportJson() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `training-tracker-${todayKey()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function exportCsv() {
+  const rows = [["date", "day", "title", "exercise", "weight", "reps", "note", "day_note"]];
+  state.history.forEach(entry => {
+    const logEntries = Object.entries(entry.log || {});
+    if (!logEntries.length) rows.push([entry.date, entry.day, entry.title, "", "", "", "", entry.dayNote || ""]);
+    else logEntries.forEach(([exercise, values]) => {
+      rows.push([entry.date, entry.day, entry.title, exercise, values.weight || "", values.reps || "", values.note || "", entry.dayNote || ""]);
+    });
+  });
+  const csv = rows.map(r => r.map(v => `"${String(v).replaceAll('"', '""')}"`).join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `training-history-${todayKey()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function resetAll() {
+  if (!confirm("确定要清空所有记录吗？")) return;
+  state = makeDefaultState();
+  saveLocalState();
+  renderAll();
+  queueCloudSync();
+}
+async function signUp() {
+  const email = document.getElementById("emailInput").value.trim();
+  const password = document.getElementById("passwordInput").value;
+  if (!email || !password) return alert("请先填写邮箱和密码。");
+  setStatus("正在注册，请稍候…", "out", "local");
+  const { data, error } = await supabaseClient.auth.signUp({
+    email, password, options: { emailRedirectTo: SITE_URL }
+  });
+  if (error) {
+    alert("注册失败：" + error.message);
+    return setStatus("注册失败：" + error.message, "out", "local");
+  }
+  if (data.session) {
+    currentSession = data.session;
+    renderAuth();
+    setStatus("注册成功，已登录，准备同步云端。", "in", "cloud-wait");
+    await initializeCloudState();
+  } else {
+    setStatus("注册成功。请去邮箱点确认链接，然后回来登录。", "out", "local");
+    alert("注册成功。请去邮箱点确认链接，再回来登录。");
+  }
+}
+async function signIn() {
+  const email = document.getElementById("emailInput").value.trim();
+  const password = document.getElementById("passwordInput").value;
+  if (!email || !password) return alert("请先填写邮箱和密码。");
+  setStatus("正在登录…", "out", "local");
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (error) {
+    alert("登录失败：" + error.message);
+    return setStatus("登录失败：" + error.message, "out", "local");
+  }
+  currentSession = data.session;
+  renderAuth();
+  setStatus("登录成功，正在初始化云端数据…", "in", "cloud-wait");
+  await initializeCloudState();
+}
+async function logout() {
+  const { error } = await supabaseClient.auth.signOut();
+  if (error) return alert("退出失败：" + error.message);
+  currentSession = null;
+  renderAuth();
+  setStatus("已退出登录。现在只保存在当前浏览器本地。", "out", "local");
+}
+async function fetchCloudState() {
+  if (!currentSession?.user?.id) return null;
+  const { data, error } = await supabaseClient.from("training_states").select("state,updated_at").eq("user_id", currentSession.user.id).maybeSingle();
+  if (error) throw error;
+  return data;
+}
+async function saveCloudState() {
+  if (!currentSession?.user?.id || isHydratingFromCloud) return;
+  setStatus("正在同步到云端…", "in", "cloud-wait");
+  const payload = { user_id: currentSession.user.id, state, updated_at: new Date().toISOString() };
+  const { error } = await supabaseClient.from("training_states").upsert(payload, { onConflict: "user_id" });
+  if (error) {
+    console.error(error);
+    return setStatus("云端同步失败：" + error.message, "in", "cloud-wait");
+  }
+  lastSyncedAt = new Date().toLocaleString();
+  setStatus("云端同步完成（" + lastSyncedAt + "）", "in", "cloud-ok");
+}
+function queueCloudSync() {
+  if (!currentSession?.user?.id) return setStatus("未登录，当前改动只保存在本地浏览器。", "out", "local");
+  setStatus("检测到新改动，等待同步…", "in", "cloud-wait");
+  if (syncTimer) clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => saveCloudState().catch(e => {
+    console.error(e); setStatus("云端同步失败：" + e.message, "in", "cloud-wait");
+  }), 800);
+}
+async function initializeCloudState() {
+  try {
+    const cloud = await fetchCloudState();
+    if (cloud?.state) {
+      isHydratingFromCloud = true;
+      state = { ...makeDefaultState(), ...cloud.state };
+      saveLocalState();
       renderAll();
-      alert("已记录，已进入下一天。");
-    }
-
-    function exportJson() {
-      const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `training-tracker-${todayKey()}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    function exportCsv() {
-      const rows = [["date", "day", "title", "exercise", "weight", "reps", "note", "day_note"]];
-      state.history.forEach(entry => {
-        const logEntries = Object.entries(entry.log || {});
-        if (!logEntries.length) {
-          rows.push([entry.date, entry.day, entry.title, "", "", "", "", entry.dayNote || ""]);
-        } else {
-          logEntries.forEach(([exercise, values]) => {
-            rows.push([
-              entry.date,
-              entry.day,
-              entry.title,
-              exercise,
-              values.weight || "",
-              values.reps || "",
-              values.note || "",
-              entry.dayNote || "",
-            ]);
-          });
-        }
-      });
-      const csv = rows.map(r => r.map(v => `"${String(v).replaceAll('"','""')}"`).join(",")).join("\n");
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `training-history-${todayKey()}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    function resetAll() {
-      if (!confirm("确定要清空所有记录吗？")) return;
-      state = makeDefaultState();
-      saveState();
+      isHydratingFromCloud = false;
+      lastSyncedAt = cloud.updated_at ? new Date(cloud.updated_at).toLocaleString() : null;
+      setStatus("已从云端加载数据" + (lastSyncedAt ? "（" + lastSyncedAt + "）" : ""), "in", "cloud-ok");
+    } else {
+      await saveCloudState();
       renderAll();
+      setStatus("云端还没有数据，已把当前本地数据上传。", "in", "cloud-ok");
     }
-
-    document.getElementById("bodyWeightInput").addEventListener("input", (e) => {
-      state.bodyWeight = e.target.value;
-      saveState();
-    });
-
-    document.getElementById("proteinInput").addEventListener("input", (e) => {
-      state.protein = e.target.value;
-      saveState();
-    });
-
-    document.getElementById("exportJsonBtn").addEventListener("click", exportJson);
-    document.getElementById("exportCsvBtn").addEventListener("click", exportCsv);
-    document.getElementById("resetBtn").addEventListener("click", resetAll);
-
-    document.querySelectorAll(".tab").forEach(tab => {
-      tab.addEventListener("click", () => {
-        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-        document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-        tab.classList.add("active");
-        const name = tab.getAttribute("data-tab");
-        document.getElementById(name + "Panel").classList.add("active");
-      });
-    });
-
+  } catch (e) {
+    console.error(e);
+    setStatus("读取云端失败：" + e.message, "in", "cloud-wait");
+  }
+}
+async function pullCloudManually() {
+  if (!currentSession?.user?.id) return alert("请先登录。");
+  if (!confirm("确定要用云端数据覆盖当前页面里的本地数据吗？")) return;
+  try {
+    const cloud = await fetchCloudState();
+    if (!cloud?.state) return alert("云端还没有可拉取的数据。");
+    isHydratingFromCloud = true;
+    state = { ...makeDefaultState(), ...cloud.state };
+    saveLocalState();
     renderAll();
-  </script>
+    isHydratingFromCloud = false;
+    lastSyncedAt = cloud.updated_at ? new Date(cloud.updated_at).toLocaleString() : null;
+    setStatus("已手动拉取云端数据（" + lastSyncedAt + "）", "in", "cloud-ok");
+  } catch (e) {
+    alert("拉取失败：" + e.message);
+  }
+}
+
+document.getElementById("bodyWeightInput").addEventListener("input", e => { state.bodyWeight = e.target.value; saveLocalState(); queueCloudSync(); });
+document.getElementById("proteinInput").addEventListener("input", e => { state.protein = e.target.value; saveLocalState(); queueCloudSync(); });
+document.getElementById("exportJsonBtn").addEventListener("click", exportJson);
+document.getElementById("exportCsvBtn").addEventListener("click", exportCsv);
+document.getElementById("syncNowBtn").addEventListener("click", () => saveCloudState());
+document.getElementById("resetBtn").addEventListener("click", resetAll);
+document.getElementById("signUpBtn").addEventListener("click", signUp);
+document.getElementById("signInBtn").addEventListener("click", signIn);
+document.getElementById("logoutBtn").addEventListener("click", logout);
+document.getElementById("pullCloudBtn").addEventListener("click", pullCloudManually);
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+    tab.classList.add("active");
+    document.getElementById(tab.getAttribute("data-tab") + "Panel").classList.add("active");
+  });
+});
+async function bootstrapAuth() {
+  const { data } = await supabaseClient.auth.getSession();
+  currentSession = data.session || null;
+  renderAuth();
+  if (currentSession?.user) {
+    setStatus("检测到已登录会话，正在连接云端…", "in", "cloud-wait");
+    await initializeCloudState();
+  } else {
+    setStatus("未登录，当前改动只保存在本地浏览器。", "out", "local");
+  }
+  supabaseClient.auth.onAuthStateChange(async (_event, session) => {
+    currentSession = session || null;
+    renderAuth();
+    if (session?.user) {
+      setStatus("登录状态已更新，正在连接云端…", "in", "cloud-wait");
+      await initializeCloudState();
+    } else {
+      setStatus("已退出登录。现在只保存在当前浏览器本地。", "out", "local");
+    }
+  });
+}
+renderAll();
+bootstrapAuth();
+</script>
 </body>
 </html>
