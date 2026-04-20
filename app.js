@@ -103,6 +103,23 @@
     return item.completed || item.sets.some(hasSetData);
   }
 
+  function parseSetCount(value, fallback = 3) {
+    if (Number.isFinite(Number(value))) return Math.max(1, Math.round(Number(value)));
+    const text = String(value ?? "").trim();
+    if (!text) return Math.max(1, fallback);
+    const range = text.match(/^(\d+)\s*-\s*(\d+)$/);
+    if (range) return Math.max(1, Number(range[2]) || Number(range[1]) || fallback);
+    const single = text.match(/^(\d+)/);
+    if (single) return Math.max(1, Number(single[1]) || fallback);
+    return Math.max(1, fallback);
+  }
+
+  function normalizeTargetSetsLabel(value, fallbackCount = 3) {
+    const text = String(value ?? "").trim();
+    if (text) return text;
+    return String(Math.max(1, fallbackCount));
+  }
+
   function makeDefaultState() {
     return { version: 2, currentDay: 1, workoutDrafts: {}, history: [], customExercises: [] };
   }
@@ -181,18 +198,22 @@
           exerciseOrder: Array.isArray(draft.exerciseOrder) ? [...draft.exerciseOrder] : [],
           exerciseItems: {}
         };
-        next.workoutDrafts[day].exerciseOrder.forEach(exerciseId => {
-          const source = draft.exerciseItems?.[exerciseId] || {};
-          next.workoutDrafts[day].exerciseItems[exerciseId] = {
+        next.workoutDrafts[day].exerciseOrder.forEach(itemKey => {
+          const source = draft.exerciseItems?.[itemKey] || {};
+          const exerciseId = source.exerciseId || itemKey;
+          const resolved = getExerciseById(exerciseId, next.customExercises);
+          const setCount = parseSetCount(source.targetSets, 3);
+          next.workoutDrafts[day].exerciseItems[itemKey] = {
+            itemKey,
             exerciseId,
-            nameSnapshot: source.nameSnapshot || getExerciseById(exerciseId, next.customExercises)?.name || exerciseId,
-            category: source.category || getExerciseById(exerciseId, next.customExercises)?.category || "其他",
-            recordType: source.recordType || getExerciseById(exerciseId, next.customExercises)?.recordType || "weight_reps",
+            nameSnapshot: source.nameSnapshot || resolved?.name || exerciseId,
+            category: source.category || resolved?.category || "其他",
+            recordType: source.recordType || resolved?.recordType || "weight_reps",
             completed: !!source.completed,
-            targetSets: Number(source.targetSets) || 3,
+            targetSets: normalizeTargetSetsLabel(source.targetSets, setCount),
             targetReps: source.targetReps || "",
             targetNote: source.targetNote || "",
-            sets: (source.sets || Array.from({ length: Number(source.targetSets) || 3 }, emptySet)).map(normalizeSet)
+            sets: (source.sets || Array.from({ length: setCount }, emptySet)).map(normalizeSet)
           };
         });
       });
@@ -238,15 +259,16 @@
     return state.workoutDrafts[state.currentDay] || null;
   }
 
-  function createDraftExercise(definition, overrides = {}) {
-    const setCount = Math.max(1, Number(overrides.targetSets) || 3);
+  function createDraftExercise(itemKey, definition, overrides = {}) {
+    const setCount = parseSetCount(overrides.targetSets, 3);
     return {
+      itemKey,
       exerciseId: definition.id,
       nameSnapshot: definition.name,
       category: definition.category,
       recordType: definition.recordType,
       completed: false,
-      targetSets: setCount,
+      targetSets: normalizeTargetSetsLabel(overrides.targetSets, setCount),
       targetReps: overrides.targetReps || "",
       targetNote: overrides.targetNote || definition.note || "",
       sets: Array.from({ length: setCount }, emptySet)
@@ -265,11 +287,12 @@
       exerciseItems: {}
     };
     if (mode === "plan" && plan.type === "train") {
-      plan.exercises.forEach(item => {
+      plan.exercises.forEach((item, index) => {
         const definition = getExerciseById(item.exerciseId);
         if (!definition) return;
-        draft.exerciseOrder.push(definition.id);
-        draft.exerciseItems[definition.id] = createDraftExercise(definition, item);
+        const itemKey = `${definition.id}__plan_${index + 1}`;
+        draft.exerciseOrder.push(itemKey);
+        draft.exerciseItems[itemKey] = createDraftExercise(itemKey, definition, item);
       });
     }
     state.workoutDrafts[state.currentDay] = draft;
@@ -460,16 +483,16 @@
     `;
   }
 
-  function renderSetRow(exerciseId, type, set, index) {
+  function renderSetRow(itemKey, type, set, index) {
     const compact = type === "reps_only" || type === "duration" ? "compact-two" : "";
     const fields = type === "weight_reps"
-      ? `<div class="mini-field"><span>重量</span><input data-set-field="weight" data-exercise-id="${exerciseId}" data-set-index="${index}" value="${escapeHtml(set.weight)}" placeholder="kg" /></div><div class="mini-field"><span>次数</span><input data-set-field="reps" data-exercise-id="${exerciseId}" data-set-index="${index}" value="${escapeHtml(set.reps)}" placeholder="次数" /></div><div class="mini-field"><span>备注</span><input data-set-field="note" data-exercise-id="${exerciseId}" data-set-index="${index}" value="${escapeHtml(set.note)}" placeholder="状态、RIR..." /></div>`
+      ? `<div class="mini-field"><span>重量</span><input data-set-field="weight" data-item-key="${itemKey}" data-set-index="${index}" value="${escapeHtml(set.weight)}" placeholder="kg" /></div><div class="mini-field"><span>次数</span><input data-set-field="reps" data-item-key="${itemKey}" data-set-index="${index}" value="${escapeHtml(set.reps)}" placeholder="次数" /></div><div class="mini-field"><span>备注</span><input data-set-field="note" data-item-key="${itemKey}" data-set-index="${index}" value="${escapeHtml(set.note)}" placeholder="状态、RIR..." /></div>`
       : type === "reps_only"
-        ? `<div class="mini-field"><span>次数</span><input data-set-field="reps" data-exercise-id="${exerciseId}" data-set-index="${index}" value="${escapeHtml(set.reps)}" placeholder="次数" /></div><div class="mini-field"><span>备注</span><input data-set-field="note" data-exercise-id="${exerciseId}" data-set-index="${index}" value="${escapeHtml(set.note)}" placeholder="节奏、感受..." /></div>`
+        ? `<div class="mini-field"><span>次数</span><input data-set-field="reps" data-item-key="${itemKey}" data-set-index="${index}" value="${escapeHtml(set.reps)}" placeholder="次数" /></div><div class="mini-field"><span>备注</span><input data-set-field="note" data-item-key="${itemKey}" data-set-index="${index}" value="${escapeHtml(set.note)}" placeholder="节奏、感受..." /></div>`
         : type === "duration"
-          ? `<div class="mini-field"><span>时长</span><input data-set-field="duration" data-exercise-id="${exerciseId}" data-set-index="${index}" value="${escapeHtml(set.duration)}" placeholder="分钟" /></div><div class="mini-field"><span>备注</span><input data-set-field="note" data-exercise-id="${exerciseId}" data-set-index="${index}" value="${escapeHtml(set.note)}" placeholder="配速、心率..." /></div>`
-          : `<div class="mini-field"><span>距离</span><input data-set-field="distance" data-exercise-id="${exerciseId}" data-set-index="${index}" value="${escapeHtml(set.distance)}" placeholder="km" /></div><div class="mini-field"><span>时长</span><input data-set-field="duration" data-exercise-id="${exerciseId}" data-set-index="${index}" value="${escapeHtml(set.duration)}" placeholder="分钟" /></div><div class="mini-field"><span>备注</span><input data-set-field="note" data-exercise-id="${exerciseId}" data-set-index="${index}" value="${escapeHtml(set.note)}" placeholder="配速、感受..." /></div>`;
-    return `<div class="set-row ${compact}"><div class="set-index">#${index + 1}</div>${fields}<button type="button" class="icon-btn" data-action="remove-set" data-exercise-id="${exerciseId}" data-set-index="${index}">−</button></div>`;
+          ? `<div class="mini-field"><span>时长</span><input data-set-field="duration" data-item-key="${itemKey}" data-set-index="${index}" value="${escapeHtml(set.duration)}" placeholder="分钟" /></div><div class="mini-field"><span>备注</span><input data-set-field="note" data-item-key="${itemKey}" data-set-index="${index}" value="${escapeHtml(set.note)}" placeholder="配速、心率..." /></div>`
+          : `<div class="mini-field"><span>距离</span><input data-set-field="distance" data-item-key="${itemKey}" data-set-index="${index}" value="${escapeHtml(set.distance)}" placeholder="km" /></div><div class="mini-field"><span>时长</span><input data-set-field="duration" data-item-key="${itemKey}" data-set-index="${index}" value="${escapeHtml(set.duration)}" placeholder="分钟" /></div><div class="mini-field"><span>备注</span><input data-set-field="note" data-item-key="${itemKey}" data-set-index="${index}" value="${escapeHtml(set.note)}" placeholder="配速、感受..." /></div>`;
+    return `<div class="set-row ${compact}"><div class="set-index">#${index + 1}</div>${fields}<button type="button" class="icon-btn" data-action="remove-set" data-item-key="${itemKey}" data-set-index="${index}">−</button></div>`;
   }
 
   function renderTraining() {
@@ -479,9 +502,9 @@
     if (!draft) {
       return `<div class="panel-stack"><div class="hero-card"><div class="hero-top"><div><div class="eyebrow">Today</div><h2 class="section-title" style="margin-top:8px">${escapeHtml(plan.title)}</h2><p class="section-copy">${escapeHtml(plan.goal)} · 预计 ${escapeHtml(plan.duration)}</p></div><span class="status-pill ${plan.type === "rest" ? "rest" : "info"}">${plan.type === "rest" ? "休息日" : "待开始"}</span></div>${strip}<div class="button-row full" style="margin-top:18px">${plan.type === "train" ? `<button type="button" class="primary-btn" data-action="start-plan">开始今天训练</button>` : `<button type="button" class="primary-btn" data-action="mark-rest">标记今天已休息</button>`}<button type="button" class="secondary-btn" data-action="start-free">${plan.type === "rest" ? "开始自由训练" : "今天改成自由训练"}</button></div></div><div class="card"><div class="card-head"><div><h3 class="section-title">今日动作预览</h3><div class="section-copy">开始后就进入可记录状态。</div></div></div><div class="preview-list">${plan.exercises.length ? plan.exercises.map(item => { const definition = getExerciseById(item.exerciseId); return `<div class="preview-item"><div class="preview-name">${escapeHtml(definition?.name || item.exerciseId)}</div><div class="preview-meta">${item.targetSets} 组 · ${escapeHtml(item.targetReps)} · ${escapeHtml(item.targetNote)}</div></div>`; }).join("") : `<div class="empty-state"><strong>今天是休息日</strong><div>如果你状态不错，也可以开始一场自由训练。</div></div>`}</div></div></div>`;
     }
-    const cards = draft.exerciseOrder.map(exerciseId => {
-      const item = draft.exerciseItems[exerciseId];
-      return `<div class="exercise-card ${item.completed ? "completed" : ""}"><div class="exercise-top"><div><div class="exercise-name">${escapeHtml(item.nameSnapshot)}</div><div class="exercise-meta">${item.targetSets} 组 · ${escapeHtml(item.targetReps || "自定义")} · ${escapeHtml(item.targetNote || recordTypeLabel(item.recordType))}</div><div class="exercise-meta">${escapeHtml(lastReference(exerciseId))}</div></div><div class="chip-row"><span class="chip">${escapeHtml(item.category)}</span><span class="chip ${item.completed ? "success" : "info"}">${item.completed ? "已完成" : "记录中"}</span></div></div><div class="set-list">${item.sets.map((set, index) => renderSetRow(exerciseId, item.recordType, set, index)).join("")}</div><div class="exercise-actions"><button type="button" class="ghost-btn" data-action="add-set" data-exercise-id="${exerciseId}">新增一组</button><button type="button" class="secondary-btn" data-action="toggle-exercise" data-exercise-id="${exerciseId}">${item.completed ? "取消完成" : "标记完成"}</button></div></div>`;
+    const cards = draft.exerciseOrder.map(itemKey => {
+      const item = draft.exerciseItems[itemKey];
+      return `<div class="exercise-card ${item.completed ? "completed" : ""}"><div class="exercise-top"><div><div class="exercise-name">${escapeHtml(item.nameSnapshot)}</div><div class="exercise-meta">${escapeHtml(item.targetSets)} 组 · ${escapeHtml(item.targetReps || "自定义")} · ${escapeHtml(item.targetNote || recordTypeLabel(item.recordType))}</div><div class="exercise-meta">${escapeHtml(lastReference(item.exerciseId))}</div></div><div class="chip-row"><span class="chip">${escapeHtml(item.category)}</span><span class="chip ${item.completed ? "success" : "info"}">${item.completed ? "已完成" : "记录中"}</span></div></div><div class="set-list">${item.sets.map((set, index) => renderSetRow(itemKey, item.recordType, set, index)).join("")}</div><div class="exercise-actions"><button type="button" class="ghost-btn" data-action="add-set" data-item-key="${itemKey}">新增一组</button><button type="button" class="secondary-btn" data-action="toggle-exercise" data-item-key="${itemKey}">${item.completed ? "取消完成" : "标记完成"}</button></div></div>`;
     }).join("");
     return `<div class="panel-stack"><div class="hero-card"><div class="hero-top"><div><div class="eyebrow">${draft.mode === "free" ? "Free Workout" : "Today"}</div><h2 class="section-title" style="margin-top:8px">${escapeHtml(draft.title)}</h2><p class="section-copy">从这里直接记录每个动作。完成后会自动进入下一训练日。</p></div><span class="status-pill success">进行中</span></div><div class="overview-grid" style="margin-top:18px"><div class="metric-card"><div class="metric-label">当前 Day</div><div class="metric-value">Day ${state.currentDay}</div></div><div class="metric-card"><div class="metric-label">已加入动作</div><div class="metric-value">${draft.exerciseOrder.length} 个</div></div></div><div class="button-row full" style="margin-top:18px"><button type="button" class="ghost-btn" data-action="open-picker">添加动作</button><button type="button" class="primary-btn" data-action="complete-workout">完成今天</button></div></div><div class="card"><div class="field"><label for="bodyWeightInput">体重（kg）</label><input id="bodyWeightInput" data-draft-meta="bodyWeight" value="${escapeHtml(draft.bodyWeight)}" placeholder="例如 95.0" /></div><div class="field"><label for="draftNoteInput">训练备注</label><textarea id="draftNoteInput" data-draft-meta="note" placeholder="今天状态、动作感受、加重情况...">${escapeHtml(draft.note)}</textarea></div></div>${cards || `<div class="empty-state"><strong>还没有动作</strong><div>先从动作库里添加一个动作。</div></div>`}</div>`;
   }
@@ -528,7 +551,10 @@
   function renderPickerModal() {
     const draft = getDraft();
     const query = ui.pickerQuery.trim().toLowerCase();
-    const list = getCatalog().filter(item => (item.source === "system" || item.active) && !draft.exerciseOrder.includes(item.id) && (!query || item.name.toLowerCase().includes(query) || item.category.toLowerCase().includes(query)));
+    const list = getCatalog().filter(item => {
+      const alreadyAdded = draft.exerciseOrder.some(itemKey => draft.exerciseItems[itemKey]?.exerciseId === item.id);
+      return (item.source === "system" || item.active) && !alreadyAdded && (!query || item.name.toLowerCase().includes(query) || item.category.toLowerCase().includes(query));
+    });
     return `<div class="modal-overlay" data-action="close-overlay"><div class="modal-sheet"><div class="modal-head"><div><div class="eyebrow">Add Exercise</div><div class="modal-title">添加动作</div><div class="muted">可选系统动作，也可以直接新建自定义动作。</div></div><button type="button" class="modal-close" data-action="close-modal">×</button></div><div class="modal-body"><div class="button-row spread" style="margin-bottom:14px"><input id="pickerSearchInput" class="search-input" value="${escapeHtml(ui.pickerQuery)}" placeholder="搜索动作名称或分类..." /><button type="button" class="primary-btn" data-action="open-form-from-picker">新建动作</button></div>${list.length ? list.map(item => `<div class="picker-item"><div><div class="preview-name">${escapeHtml(item.name)}</div><div class="preview-meta">${escapeHtml(item.category)} · ${escapeHtml(recordTypeLabel(item.recordType))}</div></div><button type="button" class="ghost-btn" data-action="pick-exercise" data-exercise-id="${escapeHtml(item.id)}">加入训练</button></div>`).join("") : `<div class="empty-state"><strong>没有可加入的动作</strong><div>可能都已经加到今天的训练里了，也可以直接新建一个动作。</div></div>`}</div></div></div>`;
   }
 
@@ -575,24 +601,24 @@
     queueSync();
   }
 
-  function updateSetField(exerciseId, setIndex, field, value) {
-    const item = getDraft()?.exerciseItems?.[exerciseId];
+  function updateSetField(itemKey, setIndex, field, value) {
+    const item = getDraft()?.exerciseItems?.[itemKey];
     if (!item || !item.sets[setIndex]) return;
     item.sets[setIndex][field] = value;
     saveState();
     queueSync();
   }
 
-  function addSet(exerciseId) {
-    const item = getDraft()?.exerciseItems?.[exerciseId];
+  function addSet(itemKey) {
+    const item = getDraft()?.exerciseItems?.[itemKey];
     if (!item) return;
     item.sets.push(emptySet());
     persist();
     renderApp();
   }
 
-  function removeSet(exerciseId, setIndex) {
-    const item = getDraft()?.exerciseItems?.[exerciseId];
+  function removeSet(itemKey, setIndex) {
+    const item = getDraft()?.exerciseItems?.[itemKey];
     if (!item) return;
     if (item.sets.length === 1) item.sets[0] = emptySet();
     else item.sets.splice(setIndex, 1);
@@ -600,8 +626,8 @@
     renderApp();
   }
 
-  function toggleExercise(exerciseId) {
-    const item = getDraft()?.exerciseItems?.[exerciseId];
+  function toggleExercise(itemKey) {
+    const item = getDraft()?.exerciseItems?.[itemKey];
     if (!item) return;
     item.completed = !item.completed;
     persist();
@@ -611,9 +637,10 @@
   function addExerciseToDraft(exerciseId) {
     const draft = getDraft();
     const definition = getExerciseById(exerciseId);
-    if (!draft || !definition || draft.exerciseItems[exerciseId]) return;
-    draft.exerciseOrder.push(exerciseId);
-    draft.exerciseItems[exerciseId] = createDraftExercise(definition, { targetSets: 3, targetReps: definition.recordType === "weight_reps" ? "8-12" : "" });
+    if (!draft || !definition || draft.exerciseOrder.some(itemKey => draft.exerciseItems[itemKey]?.exerciseId === exerciseId)) return;
+    const itemKey = `${exerciseId}__custom_${createId("item")}`;
+    draft.exerciseOrder.push(itemKey);
+    draft.exerciseItems[itemKey] = createDraftExercise(itemKey, definition, { targetSets: 3, targetReps: definition.recordType === "weight_reps" ? "8-12" : "" });
     persist();
     closeModal();
     renderApp();
@@ -624,7 +651,7 @@
     const draft = getDraft();
     if (!draft) return;
     const exercises = draft.exerciseOrder
-      .map(exerciseId => draft.exerciseItems[exerciseId])
+      .map(itemKey => draft.exerciseItems[itemKey])
       .filter(hasExerciseData)
       .map(item => ({
         exerciseId: item.exerciseId,
@@ -720,6 +747,13 @@
       const target = state.customExercises.find(item => item.id === editId);
       Object.assign(target, payload);
       Object.values(state.workoutDrafts).forEach(draft => {
+        draft.exerciseOrder.forEach(itemKey => {
+          const item = draft.exerciseItems[itemKey];
+          if (!item || item.exerciseId !== editId) return;
+          item.nameSnapshot = payload.name;
+          item.category = payload.category;
+          item.recordType = payload.recordType;
+        });
         if (draft.exerciseItems[editId]) {
           draft.exerciseItems[editId].nameSnapshot = payload.name;
           draft.exerciseItems[editId].category = payload.category;
@@ -768,9 +802,9 @@
     if (action === "start-plan") return createDraft("plan");
     if (action === "start-free") return createDraft("free");
     if (action === "mark-rest") return markRestComplete();
-    if (action === "add-set") return addSet(button.dataset.exerciseId);
-    if (action === "remove-set") return removeSet(button.dataset.exerciseId, Number(button.dataset.setIndex));
-    if (action === "toggle-exercise") return toggleExercise(button.dataset.exerciseId);
+    if (action === "add-set") return addSet(button.dataset.itemKey);
+    if (action === "remove-set") return removeSet(button.dataset.itemKey, Number(button.dataset.setIndex));
+    if (action === "toggle-exercise") return toggleExercise(button.dataset.itemKey);
     if (action === "complete-workout") return completeWorkout();
     if (action === "open-history") return openModal("history", { id: button.dataset.historyId });
     if (action === "open-library") return openModal("library");
@@ -804,7 +838,7 @@
   document.addEventListener("input", event => {
     const target = event.target;
     if (target.matches("[data-draft-meta]")) return updateDraftField(target.dataset.draftMeta, target.value);
-    if (target.matches("[data-set-field]")) return updateSetField(target.dataset.exerciseId, Number(target.dataset.setIndex), target.dataset.setField, target.value);
+    if (target.matches("[data-set-field]")) return updateSetField(target.dataset.itemKey, Number(target.dataset.setIndex), target.dataset.setField, target.value);
     if (target.id === "historySearchInput") {
       ui.historyQuery = target.value;
       return rerenderWithFocus(renderApp, "historySearchInput", target.value);
