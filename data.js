@@ -19,6 +19,7 @@ window.SYSTEM_EXERCISES = [
   { id: "split-squat", name: "保加利亚分腿蹲", category: "腿", recordType: "weight_reps", source: "system", note: "单侧稳定", active: true },
   { id: "calf-raise", name: "站姿提踵", category: "腿", recordType: "weight_reps", source: "system", note: "小腿训练", active: true },
   { id: "hanging-leg-raise", name: "悬垂举腿", category: "核心", recordType: "weight_reps", source: "system", note: "核心补充", active: true },
+  { id: "incline-walk", name: "坡度走", category: "有氧", recordType: "duration", source: "system", note: "低冲击有氧", active: true },
   { id: "hammer-curl", name: "锤式弯举", category: "手臂", recordType: "weight_reps", source: "system", note: "前臂和肱桡肌", active: true },
   { id: "overhead-triceps", name: "过顶绳索臂屈伸", category: "手臂", recordType: "weight_reps", source: "system", note: "肱三头长头", active: true },
   { id: "incline-barbell-press", name: "上斜杠铃卧推", category: "胸", recordType: "weight_reps", source: "system", note: "上胸力量", active: true },
@@ -34,43 +35,31 @@ window.SYSTEM_EXERCISES = [
 
 window.PLAN_DAYS = [
   { id: 1, title: "Day 1 · 上肢 A", type: "train", duration: "60-70 分钟", goal: "胸背主练，兼顾肩臂", exercises: [
-    { exerciseId: "bench-press", targetSets: 4, targetReps: "5-8", targetNote: "RIR 1-2" },
-    { exerciseId: "lat-pulldown", targetSets: 4, targetReps: "8-12", targetNote: "RIR 1-2" },
-    { exerciseId: "incline-dumbbell-press", targetSets: 3, targetReps: "8-12", targetNote: "RIR 1-2" },
-    { exerciseId: "chest-supported-row", targetSets: 3, targetReps: "8-12", targetNote: "RIR 1-2" },
-    { exerciseId: "lateral-raise", targetSets: 4, targetReps: "12-20", targetNote: "接近力竭" },
-    { exerciseId: "triceps-pushdown", targetSets: 3, targetReps: "10-15", targetNote: "孤立补量" },
-    { exerciseId: "dumbbell-curl", targetSets: 2, targetReps: "10-15", targetNote: "控制离心" }
+    { exerciseId: "chest-supported-row", targetSets: "1-2", targetReps: "15-20", targetNote: "激活动作" },
+    { exerciseId: "bench-press", targetSets: 4, targetReps: "5-8", targetNote: "主项推进" },
+    { exerciseId: "incline-dumbbell-press", targetSets: 3, targetReps: "8-12", targetNote: "上胸补量" },
+    { exerciseId: "chest-supported-row", targetSets: 3, targetReps: "8-12", targetNote: "主训练组" },
+    { exerciseId: "shoulder-press", targetSets: 2, targetReps: "10-15", targetNote: "肩推补充" },
+    { exerciseId: "lateral-raise", targetSets: 3, targetReps: "15-20", targetNote: "中束灼烧" },
+    { exerciseId: "triceps-pushdown", targetSets: "2-3", targetReps: "12-15", targetNote: "按恢复调整" }
   ]},
   { id: 2, title: "Day 2 · 休息", type: "rest", duration: "-", goal: "散步、拉伸、恢复", exercises: [] },
-  { id: 3, title: "Day 3 · 下肢精简 + 手臂", type: "train", duration: "45-55 分钟", goal: "保留下肢刺激，同时补手臂", exercises: [
-    { exerciseId: "squat-machine", targetSets: 3, targetReps: "5-8", targetNote: "RIR 1-2" },
-    { exerciseId: "romanian-deadlift", targetSets: 3, targetReps: "6-10", targetNote: "RIR 1-2" },
-    { exerciseId: "split-squat", targetSets: 2, targetReps: "8-10 / 侧", targetNote: "保持稳定" },
-    { exerciseId: "calf-raise", targetSets: 2, targetReps: "10-15", targetNote: "顶峰停顿" },
-    { exerciseId: "hanging-leg-raise", targetSets: 2, targetReps: "10-15", targetNote: "核心收紧" },
-    { exerciseId: "hammer-curl", targetSets: 3, targetReps: "8-12", targetNote: "控制摆动" },
-    { exerciseId: "overhead-triceps", targetSets: 3, targetReps: "10-15", targetNote: "拉伸充分" }
+  { id: 3, title: "Day 3 · 下肢功能 + 核心", type: "train", duration: "45-55 分钟", goal: "下肢功能性训练，补充核心与有氧", exercises: [
+    { exerciseId: "squat-machine", targetSets: 3, targetReps: "10-12", targetNote: "可选高脚杯深蹲/腿举" },
+    { exerciseId: "romanian-deadlift", targetSets: 3, targetReps: "8-10", targetNote: "髋主导发力" },
+    { exerciseId: "hanging-leg-raise", targetSets: 3, targetReps: "自定次数", targetNote: "核心控制优先" },
+    { exerciseId: "incline-walk", targetSets: 1, targetReps: "15-20 分钟", targetNote: "坡度有氧" }
   ]},
   { id: 4, title: "Day 4 · 休息", type: "rest", duration: "-", goal: "散步、拉伸、恢复", exercises: [] },
-  { id: 5, title: "Day 5 · 上肢 B", type: "train", duration: "60-70 分钟", goal: "上胸、背阔、肩部厚度", exercises: [
-    { exerciseId: "incline-barbell-press", targetSets: 4, targetReps: "6-10", targetNote: "RIR 1-2" },
-    { exerciseId: "pull-up", targetSets: 4, targetReps: "6-10", targetNote: "有余力再加重" },
-    { exerciseId: "machine-chest-press", targetSets: 3, targetReps: "8-12", targetNote: "中高次数" },
-    { exerciseId: "one-arm-row", targetSets: 3, targetReps: "8-12", targetNote: "顶峰收缩" },
-    { exerciseId: "reverse-fly", targetSets: 3, targetReps: "12-20", targetNote: "后束补量" },
-    { exerciseId: "lateral-raise", targetSets: 3, targetReps: "12-20", targetNote: "稳定动作路径" },
-    { exerciseId: "cable-curl", targetSets: 2, targetReps: "10-15", targetNote: "持续张力" }
+  { id: 5, title: "Day 5 · 上肢 B", type: "train", duration: "60-70 分钟", goal: "背阔与推举平衡，补肩臂", exercises: [
+    { exerciseId: "pull-up", targetSets: 4, targetReps: "8-12", targetNote: "引体向上/对握下拉" },
+    { exerciseId: "chest-supported-row", targetSets: 3, targetReps: "8-12", targetNote: "背部厚度" },
+    { exerciseId: "machine-chest-press", targetSets: 3, targetReps: "8-12", targetNote: "胸部主训练" },
+    { exerciseId: "reverse-fly", targetSets: 3, targetReps: "15-20", targetNote: "后束稳定" },
+    { exerciseId: "lateral-raise", targetSets: "3-4", targetReps: "12-20", targetNote: "按状态加减组" },
+    { exerciseId: "hammer-curl", targetSets: "2-3", targetReps: "12-15", targetNote: "肱桡肌与前臂" },
+    { exerciseId: "triceps-pushdown", targetSets: "0-2", targetReps: "12-15", targetNote: "按恢复决定" }
   ]},
   { id: 6, title: "Day 6 · 休息", type: "rest", duration: "-", goal: "散步、拉伸、恢复", exercises: [] },
-  { id: 7, title: "Day 7 · 上肢 C", type: "train", duration: "45-60 分钟", goal: "上肢补量，偏肩背胸泵感", exercises: [
-    { exerciseId: "shoulder-press", targetSets: 3, targetReps: "6-10", targetNote: "肩部主练" },
-    { exerciseId: "chest-supported-row", targetSets: 3, targetReps: "8-12", targetNote: "控制节奏" },
-    { exerciseId: "incline-machine-press", targetSets: 3, targetReps: "8-12", targetNote: "胸部泵感" },
-    { exerciseId: "wide-grip-pulldown", targetSets: 2, targetReps: "10-15", targetNote: "背阔补量" },
-    { exerciseId: "lateral-raise", targetSets: 3, targetReps: "15-20", targetNote: "中束灼烧" },
-    { exerciseId: "reverse-fly", targetSets: 2, targetReps: "15-20", targetNote: "后束收尾" },
-    { exerciseId: "triceps-pushdown", targetSets: 2, targetReps: "10-15", targetNote: "可与弯举交替" }
-  ]},
-  { id: 8, title: "Day 8 · 休息", type: "rest", duration: "-", goal: "散步、拉伸、恢复", exercises: [] }
+  { id: 7, title: "Day 7 · 休息", type: "rest", duration: "-", goal: "散步、拉伸、恢复", exercises: [] }
 ];
