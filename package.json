@@ -1,0 +1,33 @@
+{
+  "name": "fit",
+  "version": "1.0.0",
+  "description": "Training tracker rebuilt with TypeScript + Vite.",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xiaoming0016/fit.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/xiaoming0016/fit/issues"
+  },
+  "homepage": "https://github.com/xiaoming0016/fit#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.103.3"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3",
+    "vite": "^8.0.9"
+  }
+}

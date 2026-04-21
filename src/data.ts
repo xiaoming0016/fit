@@ -1,4 +1,12 @@
-window.APP_CONFIG = {
+/**
+ * 文件说明：
+ * 静态业务数据与运行时配置。
+ * 包括 APP_CONFIG、系统动作库和训练计划。
+ */
+
+import type { AppConfig, ExerciseDefinition, PlanDay } from "./types";
+
+export const APP_CONFIG: AppConfig = {
   SUPABASE_URL: "https://pqnfgjrzwikotbeephzl.supabase.co",
   SUPABASE_KEY: "sb_publishable_60fHrSGzG2if3pavzsLU6w_jND_-Y1F",
   SITE_URL: "https://xiaoming0016.github.io/fit/",
@@ -6,7 +14,7 @@ window.APP_CONFIG = {
   LEGACY_STORAGE_KEYS: ["training_tracker_html_supabase_v1"]
 };
 
-window.SYSTEM_EXERCISES = [
+export const SYSTEM_EXERCISES: ExerciseDefinition[] = [
   { id: "bench-press", name: "平板卧推", category: "胸", recordType: "weight_reps", source: "system", note: "胸部主练动作", active: true },
   { id: "lat-pulldown", name: "高位下拉", category: "背", recordType: "weight_reps", source: "system", note: "背部垂直拉", active: true },
   { id: "incline-dumbbell-press", name: "上斜哑铃卧推", category: "胸", recordType: "weight_reps", source: "system", note: "上胸发力", active: true },
@@ -33,33 +41,54 @@ window.SYSTEM_EXERCISES = [
   { id: "wide-grip-pulldown", name: "宽握下拉 / 直臂下拉", category: "背", recordType: "weight_reps", source: "system", note: "背阔补量", active: true }
 ];
 
-window.PLAN_DAYS = [
-  { id: 1, title: "Day 1 · 上肢 A", type: "train", duration: "60-70 分钟", goal: "胸背主练，兼顾肩臂", exercises: [
-    { exerciseId: "chest-supported-row", targetSets: "1-2", targetReps: "15-20", targetNote: "激活动作" },
-    { exerciseId: "bench-press", targetSets: 4, targetReps: "5-8", targetNote: "主项推进" },
-    { exerciseId: "incline-dumbbell-press", targetSets: 3, targetReps: "8-12", targetNote: "上胸补量" },
-    { exerciseId: "chest-supported-row", targetSets: 3, targetReps: "8-12", targetNote: "主训练组" },
-    { exerciseId: "shoulder-press", targetSets: 2, targetReps: "10-15", targetNote: "肩推补充" },
-    { exerciseId: "lateral-raise", targetSets: 3, targetReps: "15-20", targetNote: "中束灼烧" },
-    { exerciseId: "triceps-pushdown", targetSets: "2-3", targetReps: "12-15", targetNote: "按恢复调整" }
-  ]},
+export const PLAN_DAYS: PlanDay[] = [
+  {
+    id: 1,
+    title: "Day 1 · 上肢 A",
+    type: "train",
+    duration: "60-70 分钟",
+    goal: "胸背主练，兼顾肩臂",
+    exercises: [
+      { exerciseId: "chest-supported-row", targetSets: "1-2", targetReps: "15-20", targetNote: "激活动作" },
+      { exerciseId: "bench-press", targetSets: 4, targetReps: "5-8", targetNote: "主项推进" },
+      { exerciseId: "incline-dumbbell-press", targetSets: 3, targetReps: "8-12", targetNote: "上胸补量" },
+      { exerciseId: "chest-supported-row", targetSets: 3, targetReps: "8-12", targetNote: "主训练组" },
+      { exerciseId: "shoulder-press", targetSets: 2, targetReps: "10-15", targetNote: "肩推补充" },
+      { exerciseId: "lateral-raise", targetSets: 3, targetReps: "15-20", targetNote: "中束灼烧" },
+      { exerciseId: "triceps-pushdown", targetSets: "2-3", targetReps: "12-15", targetNote: "按恢复调整" }
+    ]
+  },
   { id: 2, title: "Day 2 · 休息", type: "rest", duration: "-", goal: "散步、拉伸、恢复", exercises: [] },
-  { id: 3, title: "Day 3 · 下肢功能 + 核心", type: "train", duration: "45-55 分钟", goal: "下肢功能性训练，补充核心与有氧", exercises: [
-    { exerciseId: "squat-machine", targetSets: 3, targetReps: "10-12", targetNote: "可选高脚杯深蹲/腿举" },
-    { exerciseId: "romanian-deadlift", targetSets: 3, targetReps: "8-10", targetNote: "髋主导发力" },
-    { exerciseId: "hanging-leg-raise", targetSets: 3, targetReps: "自定次数", targetNote: "核心控制优先" },
-    { exerciseId: "incline-walk", targetSets: 1, targetReps: "15-20 分钟", targetNote: "坡度有氧" }
-  ]},
+  {
+    id: 3,
+    title: "Day 3 · 下肢功能 + 核心",
+    type: "train",
+    duration: "45-55 分钟",
+    goal: "下肢功能性训练，补充核心与有氧",
+    exercises: [
+      { exerciseId: "squat-machine", targetSets: 3, targetReps: "10-12", targetNote: "可选高脚杯深蹲/腿举" },
+      { exerciseId: "romanian-deadlift", targetSets: 3, targetReps: "8-10", targetNote: "髋主导发力" },
+      { exerciseId: "hanging-leg-raise", targetSets: 3, targetReps: "自定次数", targetNote: "核心控制优先" },
+      { exerciseId: "incline-walk", targetSets: 1, targetReps: "15-20 分钟", targetNote: "坡度有氧" }
+    ]
+  },
   { id: 4, title: "Day 4 · 休息", type: "rest", duration: "-", goal: "散步、拉伸、恢复", exercises: [] },
-  { id: 5, title: "Day 5 · 上肢 B", type: "train", duration: "60-70 分钟", goal: "背阔与推举平衡，补肩臂", exercises: [
-    { exerciseId: "pull-up", targetSets: 4, targetReps: "8-12", targetNote: "引体向上/对握下拉" },
-    { exerciseId: "chest-supported-row", targetSets: 3, targetReps: "8-12", targetNote: "背部厚度" },
-    { exerciseId: "machine-chest-press", targetSets: 3, targetReps: "8-12", targetNote: "胸部主训练" },
-    { exerciseId: "reverse-fly", targetSets: 3, targetReps: "15-20", targetNote: "后束稳定" },
-    { exerciseId: "lateral-raise", targetSets: "3-4", targetReps: "12-20", targetNote: "按状态加减组" },
-    { exerciseId: "hammer-curl", targetSets: "2-3", targetReps: "12-15", targetNote: "肱桡肌与前臂" },
-    { exerciseId: "triceps-pushdown", targetSets: "0-2", targetReps: "12-15", targetNote: "按恢复决定" }
-  ]},
+  {
+    id: 5,
+    title: "Day 5 · 上肢 B",
+    type: "train",
+    duration: "60-70 分钟",
+    goal: "背阔与推举平衡，补肩臂",
+    exercises: [
+      { exerciseId: "pull-up", targetSets: 4, targetReps: "8-12", targetNote: "引体向上/对握下拉" },
+      { exerciseId: "chest-supported-row", targetSets: 3, targetReps: "8-12", targetNote: "背部厚度" },
+      { exerciseId: "machine-chest-press", targetSets: 3, targetReps: "8-12", targetNote: "胸部主训练" },
+      { exerciseId: "reverse-fly", targetSets: 3, targetReps: "15-20", targetNote: "后束稳定" },
+      { exerciseId: "lateral-raise", targetSets: "3-4", targetReps: "12-20", targetNote: "按状态加减组" },
+      { exerciseId: "hammer-curl", targetSets: "2-3", targetReps: "12-15", targetNote: "肱桡肌与前臂" },
+      { exerciseId: "triceps-pushdown", targetSets: "0-2", targetReps: "12-15", targetNote: "按恢复决定" }
+    ]
+  },
   { id: 6, title: "Day 6 · 休息", type: "rest", duration: "-", goal: "散步、拉伸、恢复", exercises: [] },
   { id: 7, title: "Day 7 · 休息", type: "rest", duration: "-", goal: "散步、拉伸、恢复", exercises: [] }
 ];
