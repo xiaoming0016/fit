@@ -26,6 +26,7 @@ const { authScreen, appScreen, modalRoot, toastEl } = createAppContext();
 
 let currentSession: Session | null = null;
 let toastTimer: number | null = null;
+let lastRenderedTab: UiState["tab"] | null = null;
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 function nextDay(day: number) {
@@ -239,8 +240,12 @@ function renderApp() {
   if (!currentSession?.user) {
     appScreen.classList.add("hidden");
     appScreen.innerHTML = "";
+    lastRenderedTab = null;
     return;
   }
+  const previousContent = appScreen.querySelector(".app-content") as HTMLElement | null;
+  const shouldRestoreScroll = lastRenderedTab === ui.tab;
+  const previousScrollTop = shouldRestoreScroll ? previousContent?.scrollTop ?? 0 : 0;
   appScreen.classList.remove("hidden");
   const panel = ui.tab === "training" ? renderTraining() : ui.tab === "history" ? renderHistory() : renderMe();
   appScreen.innerHTML = renderAppView({
@@ -253,6 +258,11 @@ function renderApp() {
     planGoal: getPlan().goal,
     panelHtml: panel
   });
+  if (shouldRestoreScroll) {
+    const nextContent = appScreen.querySelector(".app-content") as HTMLElement | null;
+    if (nextContent) nextContent.scrollTop = previousScrollTop;
+  }
+  lastRenderedTab = ui.tab;
   setSync(ui.syncText, ui.syncKind);
 }
 
